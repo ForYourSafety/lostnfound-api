@@ -7,6 +7,7 @@ module LostNFound
   # model for lost items
   class Item < Sequel::Model
     one_to_many :contacts
+    one_to_many :requests, class: 'LostNFound::Request', key: :item_id
     many_to_one :creator, class: 'LostNFound::Account', key: :created_by
     many_to_many :tags, class: 'LostNFound::Tag', join_table: :items_tags
 
