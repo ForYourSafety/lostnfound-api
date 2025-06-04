@@ -7,3 +7,8 @@
   name: Phone
   description: iPhone 13 in black case
   location: Campus
+
+- type: lost
+  name: Wallet
+  description: Brown leather wallet with ID and credit cards
+  location: Cafeteria
