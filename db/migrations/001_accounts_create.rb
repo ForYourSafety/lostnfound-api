@@ -11,6 +11,9 @@ Sequel.migration do
       String :email, null: false
       String :password_digest
 
+      String :student_id
+      String :name_on_id
+
       DateTime :created_at
       DateTime :updated_at
     end

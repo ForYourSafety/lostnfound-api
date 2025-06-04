@@ -15,7 +15,7 @@ module LostNFound
     plugin :association_dependencies, items: :destroy
 
     plugin :whitelist_security
-    set_allowed_columns :username, :password, :email
+    set_allowed_columns :username, :password, :email, :student_id, :name_on_id
 
     plugin :timestamps, update_on_create: true
 
@@ -28,13 +28,15 @@ module LostNFound
       password.correct?(try_password)
     end
 
-    def to_json(options = {})
+    def to_json(options = {}) # rubocop:disable Metrics/MethodLength
       JSON(
         {
           type: 'account',
           attributes: {
             username:,
-            email:
+            email:,
+            student_id:,
+            name_on_id:
           }
         }, options
       )

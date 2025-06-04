@@ -17,7 +17,7 @@ module LostNFound
     plugin :timestamps, update_on_create: true
 
     plugin :whitelist_security
-    set_allowed_columns :item_id, :requester_id, :answer, :status
+    set_allowed_columns :answer
 
     def to_json(options = {}) # rubocop:disable Metrics/MethodLength
       JSON(
@@ -30,8 +30,7 @@ module LostNFound
               requester_id:,
               answer:,
               status:,
-              created_at:,
-              updated_at:
+              created_at:
             }
           }
         }, options

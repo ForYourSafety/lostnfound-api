@@ -13,7 +13,7 @@ Sequel.migration do
       String :name, null: false
       String :description
       String :location
-      String :person_info
+      String :challenge_question
       Integer :resolved, default: 0
 
       DateTime :created_at

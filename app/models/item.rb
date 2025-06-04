@@ -20,7 +20,7 @@ module LostNFound
     plugin :timestamps, update_on_create: true
 
     plugin :whitelist_security
-    set_allowed_columns :type, :name, :description, :location, :person_info
+    set_allowed_columns :type, :name, :description, :location, :challenge_question
 
     def to_json(options = {}) # rubocop:disable Metrics/MethodLength
       JSON(
@@ -33,13 +33,13 @@ module LostNFound
               name:,
               description:,
               location:,
-              person_info:,
+              challenge_question:,
               created_by:,
               resolved:
             }
           },
           included: {
-            contacts:
+            tags:
           }
         }, options
       )
