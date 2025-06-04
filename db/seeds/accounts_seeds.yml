@@ -1,11 +1,19 @@
 # TODO: Currently, we does not support spaces or special characters in the username
 # We need to add a validation for this in the future
-- username: MaterYi
+- username: MasterYi
   password: PaSSWord
   email: mater.yi@example.com
+  student_id: 1234567890
+  name_on_id: Yi
+
 - username: SarahPan
   password: SomePassWord
   email: sarah.pan@example.com
+  student_id: 1234567891
+  name_on_id: Sarah
+
 - username: FifiDing
   password: ASETOFPAssworD
   email: fifi.ding@example.com
+  student_id: 1234567892
+  name_on_id: Fifi

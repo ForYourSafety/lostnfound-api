@@ -2,8 +2,21 @@
   name: Keys
   description: Bunch of house keys
   location: Library
+  challenge_question: How many keys are on the keychain?
+
+- type: lost
+  name: Laptop
+  description: Acer Swift Edge 16
+  location: Dorm
+  challenge_question: What is the color of the laptop sleeve?
 
 - type: found
   name: Phone
   description: iPhone 13 in black case
   location: Campus
+
+- type: found
+  name: Wallet
+  description: Brown leather wallet with ID and credit cards
+  location: Cafeteria
+  challenge_question: What is the name on the ID inside the wallet?
