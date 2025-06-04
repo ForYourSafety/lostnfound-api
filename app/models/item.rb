@@ -21,27 +21,31 @@ module LostNFound
     plugin :whitelist_security
     set_allowed_columns :type, :name, :description, :location, :person_info
 
-    def to_json(options = {}) # rubocop:disable Metrics/MethodLength
-      JSON(
-        {
-          data: {
-            type: 'item',
-            attributes: {
-              id:,
-              type:,
-              name:,
-              description:,
-              location:,
-              person_info:,
-              created_by:,
-              resolved:
-            }
-          },
-          included: {
-            contacts:
-          }
-        }, options
+    def to_h # rubocop:disable Metrics/MethodLength
+      {
+        type: 'item',
+        attributes: {
+          type:,
+          id:,
+          name:,
+          description:,
+          location:,
+          person_info:
+        }
+      }
+    end
+
+    def full_details
+      to_h.merge(
+        relationships: {
+          creator:,
+          contacts:
+        }
       )
+    end
+
+    def to_json(options = {})
+      JSON(to_h, options)
     end
   end
 end

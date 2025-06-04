@@ -4,3 +4,4 @@ _*
 db/local/*
 config/secrets.yml
 app/db/store/*
+.DS_Store
