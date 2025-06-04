@@ -1,0 +1,25 @@
+- item_name: Keys
+  requests:
+    - requester_name: MasterYi
+      request_idx: 0
+    - requester_name: SarahPan
+      request_idx: 1
+
+- item_name: Laptop
+  requests:
+    - requester_name: SarahPan
+      request_idx: 2
+    - requester_name: FifiDing
+      request_idx: 3
+
+- item_name: Phone
+  requests:
+    - requester_name: MasterYi
+      request_idx: 4
+    - requester_name: FifiDing
+      request_idx: 5
+
+- item_name: Wallet
+  requests:
+    - requester_name: MasterYi
+      request_idx: 6

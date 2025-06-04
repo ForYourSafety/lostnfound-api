@@ -7,6 +7,7 @@ module LostNFound
   # model for lost items
   class Item < Sequel::Model
     one_to_many :contacts
+    one_to_many :requests, class: 'LostNFound::Request', key: :item_id
     many_to_one :creator, class: 'LostNFound::Account', key: :created_by
     many_to_many :tags, class: 'LostNFound::Tag', join_table: :items_tags
 
@@ -19,18 +20,23 @@ module LostNFound
     plugin :timestamps, update_on_create: true
 
     plugin :whitelist_security
-    set_allowed_columns :type, :name, :description, :location, :person_info
+    set_allowed_columns :type, :name, :description, :location, :challenge_question
 
     def to_h # rubocop:disable Metrics/MethodLength
       {
         type: 'item',
         attributes: {
-          type:,
           id:,
+          type:,
           name:,
           description:,
           location:,
-          person_info:
+          challenge_question:,
+          created_by:,
+          resolved:
+        },
+        relationships: {
+          tags:
         }
       }
     end

@@ -3,3 +3,6 @@
 
 - name: Keys
   description: Items like keys or keychains
+
+- name: Valuables
+  description: Items like cash, credit cards, or important documents
