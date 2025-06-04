@@ -20,7 +20,8 @@ describe 'Test Contact Databse Model' do
   it 'HAPPY: should retrieve correct data from database' do
     item = LostNFound::Item.first
     contact_data = DATA[:contacts][1].clone
-    new_contact = LostNFound::CreateContactForItem.call(
+    new_contact = LostNFound::CreateContact.call(
+      account: item.creator,
       item_id: item.id,
       contact_data: contact_data
     )
@@ -32,7 +33,8 @@ describe 'Test Contact Databse Model' do
 
   it 'SECURITY: should not use deterministic integers' do
     item = LostNFound::Item.first
-    new_contact = LostNFound::CreateContactForItem.call(
+    new_contact = LostNFound::CreateContact.call(
+      account: item.creator,
       item_id: item.id,
       contact_data: DATA[:contacts][1]
     )
@@ -42,7 +44,8 @@ describe 'Test Contact Databse Model' do
 
   it 'SECURITY: should secure sensitive attributes' do
     item = LostNFound::Item.first
-    new_contact = LostNFound::CreateContactForItem.call(
+    new_contact = LostNFound::CreateContact.call(
+      account: item.creator,
       item_id: item.id,
       contact_data: DATA[:contacts][1]
     )

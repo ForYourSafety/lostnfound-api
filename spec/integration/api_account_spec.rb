@@ -6,6 +6,7 @@ describe 'Test Account Handling' do
   include Rack::Test::Methods
 
   before do
+    header 'CONTENT_TYPE', 'application/json'
     wipe_database
   end
 
@@ -13,7 +14,7 @@ describe 'Test Account Handling' do
     it 'HAPPY: should be able to get details of a single account' do
       account_data = DATA[:accounts][1]
       account = LostNFound::Account.create(account_data)
-
+      header 'AUTHORIZATION', auth_header(account_data)
       get "/api/v1/accounts/#{account.username}"
       _(last_response.status).must_equal 200
 
