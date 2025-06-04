@@ -14,7 +14,6 @@ module LostNFound
       routing.on String do |item_id|
         # GET api/v1/items/[ID]
         routing.get do
-          # binding.irb
           item = GetItemQuery.call(
             account: @auth_account,
             item_id: item_id
