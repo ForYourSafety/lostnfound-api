@@ -9,7 +9,6 @@ module LostNFound
   class Account < Sequel::Model
     one_to_many :items, key: :created_by
     one_to_many :requests, key: :requester_id
-    one_to_many :account_owner_infos, key: :account_id
 
     plugin :uuid, field: :id
 
