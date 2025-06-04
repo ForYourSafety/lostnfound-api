@@ -8,6 +8,7 @@ module LostNFound
   # Web controller for LostNFound API
   class Api < Roda
     plugin :halt
+    plugin :all_verbs
     plugin :multi_route
     plugin :request_headers
 
@@ -22,6 +23,8 @@ module LostNFound
         @auth_account = request.authenticated_account
       rescue AuthToken::InvalidTokenError
         routing.halt 403, { message: 'Invalid auth token' }.to_json
+      rescue AuthToken::ExpiredTokenError
+        routing.halt 403, { message: 'Expired auth token' }.to_json
       end
 
       routing.root do
