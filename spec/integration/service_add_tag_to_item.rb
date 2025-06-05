@@ -7,8 +7,8 @@ describe 'Test AddTagToItem service' do
     owner = LostNFound::Account.create(DATA[:accounts].first)
     owner.save_changes
 
-    @item = LostNFound::CreateItemForOwner.call(
-      owner_id: owner.id,
+    @item = LostNFound::CreateItemForOwner.add_item_for_owner(
+      owner: owner,
       item_data: DATA[:items][1]
     )
 
