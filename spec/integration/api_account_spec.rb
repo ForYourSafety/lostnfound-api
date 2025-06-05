@@ -14,15 +14,18 @@ describe 'Test Account Handling' do
     it 'HAPPY: should be able to get details of a single account' do
       account_data = DATA[:accounts][1]
       account = LostNFound::Account.create(account_data)
+
       header 'AUTHORIZATION', auth_header(account_data)
       get "/api/v1/accounts/#{account.username}"
       _(last_response.status).must_equal 200
 
-      attributes = JSON.parse(last_response.body)['attributes']
-      _(attributes['username']).must_equal account.username
-      _(attributes['salt']).must_be_nil
-      _(attributes['password']).must_be_nil
-      _(attributes['password_hash']).must_be_nil
+      result = JSON.parse(last_response.body)['data']['attributes']
+      account_data = result['account']['attributes']
+      _(account_data['username']).must_equal account.username
+      _(account_data['salt']).must_be_nil
+      _(account_data['password']).must_be_nil
+      _(account_data['password_hash']).must_be_nil
+      _(result['auth_token']).wont_be_nil
     end
   end
 
@@ -41,6 +44,7 @@ describe 'Test Account Handling' do
       account = LostNFound::Account.first
 
       _(created['username']).must_equal @account_data['username']
+      _(created['email']).must_equal @account_data['email']
       _(account.password?(@account_data['password'])).must_equal true
       _(account.password?('not_really_the_password')).must_equal false
     end
