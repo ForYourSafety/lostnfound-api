@@ -3,18 +3,20 @@
 module LostNFound
   # Create an new item for an owner
   class CreateItemForOwner
-    # Custom error class for owner not found
-    class OwnerNotFoundError < StandardError
-      def message = 'Owner not found'
+    # Custom error class for cannot create item
+    class ForbiddenError < StandardError
+      def message
+        'You are not allowed to create items'
+      end
     end
 
-    def self.call(owner_id:, item_data:)
-      owner = Account.first(id: owner_id)
-      raise(OwnerNotFoundError) unless owner
+    def self.call(auth:, item_data:)
+      raise ForbiddenError unless auth
+      raise ForbiddenError unless auth.scope.can_write?('items')
 
       item_data = item_data.clone
       item_data['type'] = item_data['type'].to_sym # Convert string to enum
-      owner.add_item(item_data)
+      auth.account.add_item(item_data)
     end
   end
 end
