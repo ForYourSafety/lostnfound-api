@@ -13,7 +13,7 @@ module LostNFound
         # GET api/v1/accounts/[username]
         routing.get do
           auth = AuthorizeAccount.call(
-            creator: @auth_account, username: username,
+            auth: @auth, username: username,
             auth_scope: AuthScope::READ_ONLY
           )
 
