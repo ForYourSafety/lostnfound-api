@@ -37,7 +37,7 @@ module LostNFound
 
             routing.halt 404, { message: 'Item not found' }.to_json unless item
 
-            new_contact = CreateContact.call(
+            new_contact = CreateContactToItem.call(
               auth: @auth,
               item_id: item.id,
               contact_data: new_data
@@ -46,9 +46,9 @@ module LostNFound
             response.status = 201
             response['Location'] = "#{@contacts_route}/#{new_contact.id}"
             { message: 'Contact saved', data: new_contact }.to_json
-          rescue CreateContact::ForbiddenError => e
+          rescue CreateContactToItem::ForbiddenError => e
             routing.halt 403, { message: e.message }.to_json
-          rescue CreateContact::IllegalRequestError => e
+          rescue CreateContactToItem::IllegalRequestError => e
             routing.halt 400, { message: e.message }.to_json
           rescue Sequel::MassAssignmentRestriction
             Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"

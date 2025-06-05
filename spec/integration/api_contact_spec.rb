@@ -29,7 +29,7 @@ describe 'Test Contact Handling' do
       item = LostNFound::Item.first
       contact_data = DATA[:contacts][1]
 
-      contact = LostNFound::CreateContact.add_item_contact(
+      contact = LostNFound::CreateContactToItem.add_item_contact(
         item: item,
         contact_data: contact_data
       )

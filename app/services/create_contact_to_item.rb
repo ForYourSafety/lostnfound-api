@@ -2,7 +2,7 @@
 
 module LostNFound
   # Create a new contact for an item
-  class CreateContact
+  class CreateContactToItem
     # Error for owner cannot add more contacts
     class ForbiddenError < StandardError
       def message
