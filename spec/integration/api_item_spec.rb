@@ -20,8 +20,13 @@ describe 'Test Item Handling' do
   describe 'Getting items' do
     describe 'Getting list of items' do
       before do
-        @account.add_item(DATA[:items][0])
-        @account.add_item(DATA[:items][1])
+        # Create two items for the account
+        DATA[:items][0..1].each do |item_data|
+          LostNFound::CreateItemForOwner.add_item_for_owner(
+            owner: @account,
+            item_data: item_data
+          )
+        end
       end
 
       it 'HAPPY: should get list for authorized account' do
@@ -34,7 +39,7 @@ describe 'Test Item Handling' do
         _(result['data'].count).must_equal 2
       end
 
-      it 'BAD: should not process for unauthorized account' do
+      it 'BAD: should not process with invalid auth token' do
         header 'AUTHORIZATION', 'Bearer bad_token'
         get 'api/v1/items'
         _(last_response.status).must_equal 403
@@ -44,7 +49,7 @@ describe 'Test Item Handling' do
       end
 
       it 'HAPPY: should be able to get details of a single item' do
-        item = @account.add_item(DATA[:items][0])
+        item = @account.add_item(DATA[:items][2])
         header 'AUTHORIZATION', auth_header(@account_data)
 
         get "/api/v1/items/#{item.id}"
