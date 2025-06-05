@@ -28,14 +28,12 @@ module LostNFound
     def to_json(options = {}) # rubocop:disable Metrics/MethodLength
       JSON(
         {
-          data: {
-            type: 'contact',
-            attributes: {
-              id:,
-              item_id:,
-              contact_type:,
-              value:
-            }
+          type: 'contact',
+          attributes: {
+            id:,
+            item_id:,
+            contact_type:,
+            value:
           }
         }, options
       )

@@ -12,16 +12,14 @@ module LostNFound
     plugin :whitelist_security
     set_allowed_columns :name, :description
 
-    def to_json(options = {}) # rubocop:disable Metrics/MethodLength
+    def to_json(options = {})
       JSON(
         {
-          data: {
-            type: 'tag',
-            attributes: {
-              id:,
-              name:,
-              description:
-            }
+          type: 'tag',
+          attributes: {
+            id:,
+            name:,
+            description:
           }
         }, options
       )
