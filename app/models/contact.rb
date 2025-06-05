@@ -25,17 +25,21 @@ module LostNFound
       self.value_secure = SecureDB.encrypt(value)
     end
 
-    def to_json(options = {}) # rubocop:disable Metrics/MethodLength
+    def to_h
+      {
+        type: 'contact',
+        attributes: {
+          id:,
+          item_id:,
+          contact_type:,
+          value:
+        }
+      }
+    end
+
+    def to_json(options = {})
       JSON(
-        {
-          type: 'contact',
-          attributes: {
-            id:,
-            item_id:,
-            contact_type:,
-            value:
-          }
-        }, options
+        to_h, options
       )
     end
   end
