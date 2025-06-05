@@ -42,7 +42,7 @@ module LostNFound
     end
 
     def can_request?
-      !item_poster? && !item_resolved?
+      logged_in? && !item_poster? && !item_resolved?
     end
 
     def summary
@@ -69,7 +69,7 @@ module LostNFound
     end
 
     def item_resolved?
-      @item.resolved
+      @item.resolved == 1
     end
 
     def request_approved?
