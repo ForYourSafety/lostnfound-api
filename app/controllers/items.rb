@@ -9,23 +9,6 @@ module LostNFound
     route('items') do |routing|
       @item_route = "#{@api_root}/items"
       routing.on String do |item_id|
-        # GET api/v1/items/[ID]
-        routing.get do
-          item = GetItemQuery.call(
-            auth: @auth,
-            item_id: item_id
-          )
-
-          { data: item }.to_json
-        rescue GetItemQuery::ForbiddenError => e
-          routing.halt 403, { message: e.message }.to_json
-        rescue GetItemQuery::NotFoundError => e
-          routing.halt 404, { message: e.message }.to_json
-        rescue StandardError => e
-          puts "FIND ITEM ERROR: #{e.inspect}"
-          routing.halt 500, { message: 'API server error' }.to_json
-        end
-
         routing.on 'contacts' do
           @contacts_route = "#{@api_root}/items/#{item_id}/contacts"
 
@@ -39,7 +22,7 @@ module LostNFound
               item: item
             )
 
-            { data: item, contacts: contacts }.to_json
+            { data: contacts }.to_json
           rescue GetItemContactsQuery::ForbiddenError => e
             routing.halt 403, { message: e.message }.to_json
           rescue StandardError => e
@@ -55,7 +38,7 @@ module LostNFound
             routing.halt 404, { message: 'Item not found' }.to_json unless item
 
             new_contact = CreateContact.call(
-              account: @auth_account,
+              auth: @auth,
               item_id: item.id,
               contact_data: new_data
             )
@@ -67,10 +50,30 @@ module LostNFound
             routing.halt 403, { message: e.message }.to_json
           rescue CreateContact::IllegalRequestError => e
             routing.halt 400, { message: e.message }.to_json
+          rescue Sequel::MassAssignmentRestriction
+            Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+            routing.halt 400, { message: 'Illegal Attributes' }.to_json
           rescue StandardError => e
             Api.logger.error "UNKNOWN ERROR: #{e.message}"
             routing.halt 500, { message: 'Unknown server error' }.to_json
           end
+        end
+
+        # GET api/v1/items/:item_id
+        routing.get do
+          item = GetItemQuery.call(
+            auth: @auth,
+            item_id: item_id
+          )
+
+          { data: item }.to_json
+        rescue GetItemQuery::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue GetItemQuery::NotFoundError => e
+          routing.halt 404, { message: e.message }.to_json
+        rescue StandardError => e
+          puts "FIND ITEM ERROR: #{e.inspect}"
+          routing.halt 500, { message: 'API server error' }.to_json
         end
       end
 

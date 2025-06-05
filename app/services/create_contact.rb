@@ -29,17 +29,15 @@ module LostNFound
       raise(ItemNotFoundError) unless item
 
       policy = ItemPolicy.new(auth, item)
-      raise ForbiddenError unless policy.can_create_contact?
+      raise ForbiddenError unless policy.can_add_contact?
 
-      new_data = contact_data.clone
-      new_data['contact_type'] = new_data['contact_type'].to_sym # Convert string to enum
-      add_item_contact(item, new_data)
+      add_item_contact(item: item, contact_data: contact_data)
     end
 
-    def self.add_item_contact(item, contact_data)
-      item.add_contact(contact_data)
-    rescue Sequel::MassAssignmentRestriction
-      raise IllegalRequestError
+    def self.add_item_contact(item:, contact_data:)
+      new_data = contact_data.clone
+      new_data['contact_type'] = new_data['contact_type'].to_sym # Convert string to enum
+      item.add_contact(new_data)
     end
   end
 end

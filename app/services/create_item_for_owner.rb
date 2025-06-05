@@ -14,9 +14,13 @@ module LostNFound
       raise ForbiddenError unless auth
       raise ForbiddenError unless auth.scope.can_write?('items')
 
-      item_data = item_data.clone
-      item_data['type'] = item_data['type'].to_sym # Convert string to enum
-      auth.account.add_item(item_data)
+      add_item_for_owner(owner: auth.account, item_data: item_data)
+    end
+
+    def self.add_item_for_owner(owner:, item_data:)
+      new_item = item_data.clone
+      new_item['type'] = new_item['type'].to_sym # Convert string to enum
+      owner.add_item(new_item)
     end
   end
 end
