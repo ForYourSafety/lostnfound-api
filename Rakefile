@@ -87,6 +87,7 @@ namespace :db do
 
   desc 'Seeds the development database'
   task seed: [:load_models] do
+    require_app(%w[lib models policies services])
     require 'sequel/extensions/seed'
     Sequel::Seed.setup(:development)
     Sequel.extension :seed

@@ -1,0 +1,49 @@
+- username: MasterYi
+  items:
+    - name: Laptop
+      tag_names:
+        - 3C Products
+      contact_idxs:
+        - 2
+      requests:
+        - requester_name: SarahPan
+          request_idx: 2
+        - requester_name: FifiDing
+          request_idx: 3
+
+    - name: Wallet
+      tag_names:
+        - Keys
+        - Valuables
+      contact_idxs:
+        - 4
+      requests:
+        - requester_name: SarahPan
+          request_idx: 6
+
+- username: SarahPan
+  items:
+    - name: Phone
+      tag_names:
+        - 3C Products
+      contact_idxs:
+        - 3
+      requests:
+        - requester_name: MasterYi
+          request_idx: 4
+        - requester_name: FifiDing
+          request_idx: 5
+
+- username: FifiDing
+  items:
+    - name: Keys
+      tag_names:
+        - Keys
+      contact_idxs:
+        - 0
+        - 1
+      requests:
+        - requester_name: MasterYi
+          request_idx: 0
+        - requester_name: SarahPan
+          request_idx: 1

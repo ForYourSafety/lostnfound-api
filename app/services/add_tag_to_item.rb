@@ -18,8 +18,13 @@ module LostNFound
       def message = 'Item already has this tag'
     end
 
+    # Error for forbidden action to add a tag
+    class ForbiddenError < StandardError
+      def message = 'You are not allowed to add tags to this item'
+    end
+
     # Adds a tag to an item
-    def self.call(item_id:, tag_id:)
+    def self.call(auth:, item_id:, tag_id:)
       item = Item.first(id: item_id)
       raise(ItemNotFoundError) unless item
 
@@ -29,6 +34,13 @@ module LostNFound
       # Ensure the item and tag are not already associated
       raise(ItemAlreadyHasTagError) if item.tags.include?(tag)
 
+      policy = ItemPolicy.new(auth, item)
+      raise(ForbiddenError) unless policy.can_add_tag?
+
+      add_tag_to_item(item: item, tag: tag)
+    end
+
+    def self.add_tag_to_item(item:, tag:)
       item.add_tag(tag)
     end
   end

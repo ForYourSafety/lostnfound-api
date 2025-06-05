@@ -20,10 +20,15 @@ CONTACTS = YAML.load_file("#{DIR}/contact_seeds.yml")
 TAGS = YAML.load_file("#{DIR}/tags_seeds.yml")
 REQUESTS = YAML.load_file("#{DIR}/request_seeds.yml")
 
-ACCOUNT_ITEMS_INFO = YAML.load_file("#{DIR}/account_items.yml")
-ITEM_CONTACTS_INFO = YAML.load_file("#{DIR}/item_contacts.yml")
-ITEM_TAGS_INFO = YAML.load_file("#{DIR}/item_tags.yml")
-ITEM_REQUESTS_INFO = YAML.load_file("#{DIR}/item_requests.yml")
+RELATIONSHIPS_INFO = YAML.load_file("#{DIR}/seed_relationships.yml")
+
+def scoped_auth(auth_token)
+  token = AuthToken.new(auth_token)
+  account_data = token.payload['attributes']
+
+  account = LostNFound::Account.find(username: account_data['username'])
+  LostNFound::AuthorizedAccount.new(account, token.scope)
+end
 
 def create_accounts
   ACCOUNTS.each do |account_data|
@@ -31,32 +36,41 @@ def create_accounts
   end
 end
 
-def create_items
-  ACCOUNT_ITEMS_INFO.each do |account_item_info|
-    account = LostNFound::Account.find(username: account_item_info['username'])
+def create_items # rubocop:disable Metrics/MethodLength
+  RELATIONSHIPS_INFO.each do |account_info|
+    account = LostNFound::Account.find(username: account_info['username'])
+    auth_token = AuthToken.create(account)
+    auth = scoped_auth(auth_token)
 
-    account_item_info['items'].each do |item_name|
-      item_data = ITEMS.find { |item| item['name'] == item_name }
+    account_info['items'].each do |item_info|
+      item_data = ITEMS.find { |item| item['name'] == item_info['name'] }
 
       LostNFound::CreateItemForOwner.call(
-        owner_id: account.id,
+        auth: auth,
         item_data: item_data
       )
     end
   end
 end
 
-def create_contacts
-  ITEM_CONTACTS_INFO.each do |item_contact_info|
-    item = LostNFound::Item.first(name: item_contact_info['item_name'])
+def create_contacts # rubocop:disable Metrics/MethodLength
+  RELATIONSHIPS_INFO.each do |account_info|
+    account = LostNFound::Account.find(username: account_info['username'])
+    auth_token = AuthToken.create(account)
+    auth = scoped_auth(auth_token)
 
-    item_contact_info['contact_idxs'].each do |contact_idx|
-      contact_data = CONTACTS[contact_idx]
+    account_info['items'].each do |item_info|
+      item = LostNFound::Item.find(name: item_info['name'])
 
-      LostNFound::CreateContactForItem.call(
-        item_id: item.id,
-        contact_data: contact_data
-      )
+      item_info['contact_idxs'].each do |contact_idx|
+        contact_data = CONTACTS[contact_idx]
+
+        LostNFound::CreateContactToItem.call(
+          auth: auth,
+          item_id: item.id,
+          contact_data: contact_data
+        )
+      end
     end
   end
 end
@@ -68,33 +82,45 @@ def create_tags
 end
 
 def add_tags_to_items
-  ITEM_TAGS_INFO.each do |item_tag_info|
-    item = LostNFound::Item.first(name: item_tag_info['item_name'])
+  RELATIONSHIPS_INFO.each do |account_info|
+    account = LostNFound::Account.find(username: account_info['username'])
+    auth_token = AuthToken.create(account)
+    auth = scoped_auth(auth_token)
 
-    item_tag_info['tag_names'].each do |tag_name|
-      tag = LostNFound::Tag.first(name: tag_name)
-      item.add_tag(tag)
+    account_info['items'].each do |item_info|
+      item = LostNFound::Item.find(name: item_info['name'])
+
+      item_info['tag_names'].each do |tag_name|
+        tag = LostNFound::Tag.find(name: tag_name)
+        LostNFound::AddTagToItem.call(auth: auth, item_id: item.id, tag_id: tag.id)
+      end
     end
   end
 end
 
-def create_requests # rubocop:disable Metrics/MethodLength
-  ITEM_REQUESTS_INFO.each do |item_request_info|
-    item = LostNFound::Item.first(name: item_request_info['item_name'])
+def create_requests # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
+  RELATIONSHIPS_INFO.each do |account_info|
+    account_info['items'].each do |item_info|
+      item = LostNFound::Item.find(name: item_info['name'])
 
-    item_request_info['requests'].each do |request_info|
-      requester = LostNFound::Account.first(username: request_info['requester_name'])
-      request_data = REQUESTS[request_info['request_idx']]
+      item_info['requests'].each do |request_info|
+        requester = LostNFound::Account.find(username: request_info['requester_name'])
+        auth_token = AuthToken.create(requester)
+        auth = scoped_auth(auth_token)
 
-      request = LostNFound::CreateRequest.call(
-        requester_id: requester.id,
-        item_id: item.id,
-        request_data: request_data
-      )
+        request_data = REQUESTS[request_info['request_idx']]
+        status = request_data.delete('status')
 
-      # Update the request status if provided in the request data
-      request.status = request_data['status'].to_sym
-      request.save_changes
+        request = LostNFound::CreateRequestToItem.call(
+          auth: auth,
+          item_id: item.id,
+          request_data: request_data
+        )
+
+        # Update the request status if provided in the request data
+        request.status = status.to_sym
+        request.save_changes
+      end
     end
   end
 end
