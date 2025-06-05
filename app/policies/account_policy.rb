@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-# If an account can view, edit, or delete itself
+# If an account can view, edit, or delete this account
 class AccountPolicy
-  def initialize(creator, account)
-    @creator = creator
-    @account = account
+  def initialize(auth, account)
+    @account = auth.account if auth
+    @this_account = account
   end
 
   def can_view?
@@ -29,7 +29,11 @@ class AccountPolicy
 
   private
 
+  def logged_in?
+    !@account.nil?
+  end
+
   def self_request?
-    @creator == @account
+    logged_in? && @account == @this_account
   end
 end

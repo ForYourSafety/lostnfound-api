@@ -4,39 +4,78 @@ module LostNFound
   # Item policy for accounts
 
   class ItemPolicy # rubocop:disable Style/Documentation
-    def initialize(account, item)
-      @account = account
+    def initialize(auth, item)
+      @account = auth.account if auth
       @item = item
     end
 
     def can_view?
-      owns_item?
+      true
     end
 
-    # def can_create? 這個要嗎 待討論
-    #   true
-    # end
-
     def can_edit?
-      owns_item?
+      item_poster?
     end
 
     def can_delete?
-      owns_item?
+      item_poster?
+    end
+
+    def can_add_contact?
+      item_poster?
+    end
+
+    def can_remove_contact?
+      item_poster?
+    end
+
+    def can_view_contacts?
+      item_poster? || request_approved?
+    end
+
+    def can_add_tag?
+      item_poster?
+    end
+
+    def can_remove_tag?
+      item_poster?
+    end
+
+    def can_request?
+      !item_poster? && !item_resolved?
     end
 
     def summary
       {
-        # can_create: can_create?,
         can_edit: can_edit?,
-        can_delete: can_delete?
+        can_delete: can_delete?,
+        can_request: can_request?,
+        can_add_contact: can_add_contact?,
+        can_remove_contact: can_remove_contact?,
+        can_view_contacts: can_view_contacts?,
+        can_add_tag: can_add_tag?,
+        can_remove_tag: can_remove_tag?
       }
     end
 
     private
 
-    def owns_item?
-      @item.created_by == @account.id
+    def logged_in?
+      !@account.nil?
+    end
+
+    def item_poster?
+      logged_in? && @item.created_by == @account.id
+    end
+
+    def item_resolved?
+      @item.resolved
+    end
+
+    def request_approved?
+      logged_in? && @item.requests.any? do |request|
+        request.status == :approved && request.requester_id == @account.id
+      end
     end
   end
 end
