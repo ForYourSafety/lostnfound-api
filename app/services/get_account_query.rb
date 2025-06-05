@@ -10,10 +10,10 @@ module LostNFound
       end
     end
 
-    def self.call(creator:, username:)
+    def self.call(auth:, username:)
       account = Account.first(username: username)
 
-      policy = AccountPolicy.new(creator, account)
+      policy = AccountPolicy.new(auth, account)
       policy.can_view? ? account : raise(ForbiddenError)
     end
   end
