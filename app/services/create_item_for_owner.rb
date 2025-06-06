@@ -34,6 +34,7 @@ module LostNFound
 
       image_keys = images.map { |image| upload_image(image) }
       item.image_keys = image_keys.join(',') if image_keys.any?
+      item.save_changes
 
       item
     end

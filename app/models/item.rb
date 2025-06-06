@@ -43,12 +43,7 @@ module LostNFound
     end
 
     def full_details
-      to_h.merge(
-        relationships: {
-          creator:,
-          contacts:
-        }
-      )
+      to_h
     end
 
     def to_json(options = {})
