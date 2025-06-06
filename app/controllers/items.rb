@@ -89,11 +89,19 @@ module LostNFound
 
         # POST /api/v1/items
         routing.post do
-          new_data = JSON.parse(routing.body.read)
+          json_data = if request.content_type.start_with?('multipart/form-data')
+                        routing.params.delete('data')
+                      else
+                        routing.body.read
+                      end
+          new_data = JSON.parse(json_data)
+
+          images = routing.params.delete('images') || []
 
           new_item = CreateItemForOwner.call(
             auth: @auth,
-            item_data: new_data
+            item_data: new_data,
+            images: images
           )
 
           response.status = 201
@@ -101,6 +109,8 @@ module LostNFound
           { message: 'Item saved', data: new_item }.to_json
         rescue CreateItemForOwner::ForbiddenError => e
           routing.halt 403, { message: e.message }.to_json
+        rescue CreateItemForOwner::InvalidImageError => e
+          routing.halt 400, { message: e.message }.to_json
         rescue Sequel::MassAssignmentRestriction
           Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
           routing.halt 400, { message: 'Illegal Attributes' }.to_json

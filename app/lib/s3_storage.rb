@@ -4,7 +4,7 @@ require 'aws-sdk-s3'
 
 # Storage with S3
 class S3Storage
-  def initialize(bucket:, endpoint:, region:, access_key_id:, secret_access_key:)
+  def self.setup(bucket:, endpoint:, region:, access_key_id:, secret_access_key:)
     @client = Aws::S3::Client.new(
       access_key_id: access_key_id,
       secret_access_key: secret_access_key,
@@ -17,7 +17,7 @@ class S3Storage
     @bucket = bucket
   end
 
-  def upload(object_key, contents, content_type = 'image', acl = 'public-read')
+  def self.upload(object_key:, contents:, content_type:, acl: 'public-read')
     @client.put_object(
       bucket: @bucket,
       key: object_key,
@@ -27,7 +27,7 @@ class S3Storage
     )
   end
 
-  def delete(object_key)
+  def self.delete(object_key:)
     @client.delete_object(
       bucket: @bucket,
       key: object_key

@@ -7,6 +7,7 @@ ruby File.read('.ruby-version').strip
 gem 'base64'
 gem 'json'
 gem 'logger', '~> 1.0'
+gem 'mimemagic'
 gem 'puma', '~>6.0'
 gem 'rack', '~>3.1.15'
 gem 'roda', '~>3.0'

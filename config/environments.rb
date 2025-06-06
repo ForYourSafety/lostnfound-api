@@ -33,14 +33,13 @@ module LostNFound
       AuthToken.setup(ENV.fetch('MSG_KEY'))
 
       # Setup S3 storage
-      IMG_STORE = S3Storage.new(
+      S3Storage.setup(
         access_key_id: ENV.delete('S3_ACCESS_KEY_ID'),
         secret_access_key: ENV.delete('S3_SECRET_ACCESS_KEY'),
         bucket: ENV.delete('S3_BUCKET'),
         endpoint: ENV.delete('S3_ENDPOINT'),
         region: ENV.delete('S3_REGION')
       )
-      def self.IMG_STORE = IMG_STORE # rubocop:disable Naming/MethodName
 
       # Custom events logging
       LOGGER = Logger.new($stderr)
