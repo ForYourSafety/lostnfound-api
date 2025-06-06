@@ -8,8 +8,8 @@ gem 'base64'
 gem 'json'
 gem 'logger', '~> 1.0'
 gem 'puma', '~>6.0'
-gem 'roda', '~>3.0'
 gem 'rack', '~>3.1.15'
+gem 'roda', '~>3.0'
 
 # Configuration
 gem 'figaro', '~>1.2'
@@ -28,6 +28,7 @@ group :development, :test do
 end
 
 # External Services
+gem 'aws-sdk-s3'
 gem 'http'
 
 # Performance

@@ -32,6 +32,7 @@ module LostNFound
           description:,
           location:,
           challenge_question:,
+          image_keys:,
           created_by:,
           resolved:
         },

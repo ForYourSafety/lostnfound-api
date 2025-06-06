@@ -14,6 +14,7 @@ Sequel.migration do
       String :description
       String :location
       String :challenge_question
+      String :image_keys
       Integer :resolved, default: 0
 
       DateTime :created_at
