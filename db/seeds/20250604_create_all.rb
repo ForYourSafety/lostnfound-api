@@ -45,9 +45,15 @@ def create_items # rubocop:disable Metrics/MethodLength
     account_info['items'].each do |item_info|
       item_data = ITEMS.find { |item| item['name'] == item_info['name'] }
 
+      image_paths = item_data.delete('images') || []
+      images = image_paths.map do |image_path|
+        { tempfile: File.open("#{DIR}/#{image_path}") }
+      end
+
       LostNFound::CreateItemForOwner.call(
         auth: auth,
-        item_data: item_data
+        item_data: item_data,
+        images: images
       )
     end
   end
@@ -81,7 +87,7 @@ def create_tags
   end
 end
 
-def add_tags_to_items
+def add_tags_to_items # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
   RELATIONSHIPS_INFO.each do |account_info|
     account = LostNFound::Account.find(username: account_info['username'])
     auth_token = AuthToken.create(account)
