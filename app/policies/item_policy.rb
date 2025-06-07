@@ -46,7 +46,7 @@ module LostNFound
     end
 
     def can_request?
-      logged_in? && !item_poster? && !item_resolved?
+      logged_in? && !can_view_contacts? && !item_resolved?
     end
 
     def summary # rubocop:disable Metrics/MethodLength
