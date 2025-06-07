@@ -30,7 +30,6 @@ module LostNFound
     end
 
     def signed_body_data
-      binding.irb
       SignedRequest.parse(body_data)
     end
   end

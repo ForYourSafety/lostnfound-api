@@ -24,7 +24,6 @@ class SignedRequest
   end
 
   def self.parse(signed)
-    binding.irb
     signed[:data] if verify(signed[:data], signed[:signature])
   end
 
