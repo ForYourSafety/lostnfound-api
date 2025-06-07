@@ -21,6 +21,10 @@ module LostNFound
       item_poster?
     end
 
+    def can_resolve?
+      item_poster? && !item_resolved?
+    end
+
     def can_add_contact?
       item_poster?
     end
@@ -45,10 +49,11 @@ module LostNFound
       logged_in? && !item_poster? && !item_resolved?
     end
 
-    def summary
+    def summary # rubocop:disable Metrics/MethodLength
       {
         can_edit: can_edit?,
         can_delete: can_delete?,
+        can_resolve: can_resolve?,
         can_request: can_request?,
         can_add_contact: can_add_contact?,
         can_remove_contact: can_remove_contact?,

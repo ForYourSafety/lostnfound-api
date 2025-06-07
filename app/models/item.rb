@@ -46,6 +46,14 @@ module LostNFound
       to_h
     end
 
+    def full_details_with_contacts
+      full_details.merge(
+        relationships: {
+          contacts: contacts.map(&:to_h)
+        }
+      )
+    end
+
     def to_json(options = {})
       JSON(to_h, options)
     end

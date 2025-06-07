@@ -24,7 +24,8 @@ module LostNFound
       policy = ItemPolicy.new(auth, item)
       raise ForbiddenError unless policy.can_view?
 
-      item.full_details.merge(policies: policy.summary)
+      item_details = policy.can_view_contacts? ? item.full_details_with_contacts : item.full_details
+      item_details.merge(policies: policy.summary)
     end
   end
 end

@@ -28,18 +28,28 @@ module LostNFound
       password.correct?(try_password)
     end
 
-    def to_json(options = {}) # rubocop:disable Metrics/MethodLength
-      JSON(
-        {
-          type: 'account',
-          attributes: {
-            username:,
-            email:,
-            student_id:,
-            name_on_id:
-          }
-        }, options
+    def to_h
+      {
+        type: 'account',
+        attributes: {
+          id:,
+          username:,
+          email:
+        }
+      }
+    end
+
+    def full_details
+      to_h.merge(
+        attributes: {
+          student_id:,
+          name_on_id:
+        }
       )
+    end
+
+    def to_json(options = {})
+      JSON(to_h, options)
     end
   end
 end
