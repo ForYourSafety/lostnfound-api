@@ -25,7 +25,7 @@ describe 'Test Authentication Routes' do
       _(last_response.status).must_equal 200
       _(account['username']).must_equal(@account_data['username'])
       _(account['email']).must_equal(@account_data['email'])
-      _(account['id']).must_be_nil
+      _(account['id']).must_equal(@account.id)
     end
 
     it 'BAD: should not authenticate invalid password' do

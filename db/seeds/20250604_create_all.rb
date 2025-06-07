@@ -36,7 +36,7 @@ def create_accounts
   end
 end
 
-def create_items # rubocop:disable Metrics/MethodLength
+def create_items # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
   RELATIONSHIPS_INFO.each do |account_info|
     account = LostNFound::Account.find(username: account_info['username'])
     auth_token = AuthToken.create(account)
@@ -45,7 +45,7 @@ def create_items # rubocop:disable Metrics/MethodLength
     account_info['items'].each do |item_info|
       item_data = ITEMS.find { |item| item['name'] == item_info['name'] }
 
-      image_paths = item_data.delete('images') || []
+      image_paths = item_info.delete('images') || []
       images = image_paths.map do |image_path|
         { tempfile: File.open("#{DIR}/#{image_path}") }
       end

@@ -33,6 +33,9 @@
           request_idx: 4
         - requester_name: FifiDing
           request_idx: 5
+      images:
+        - iphone1.jpg
+        - iphone2.jpg
 
 - username: FifiDing
   items:
