@@ -7,6 +7,7 @@ module LostNFound
     class UnauthorizedError < StandardError
       def initialize(msg = nil)
         super
+        # binding.irb
         @credentials = msg
       end
 
@@ -16,6 +17,7 @@ module LostNFound
     end
 
     def self.call(credentials)
+      # binding.irb
       account = Account.first(username: credentials[:username])
       raise unless account.password?(credentials[:password])
 

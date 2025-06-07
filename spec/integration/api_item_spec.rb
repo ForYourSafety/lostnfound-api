@@ -71,7 +71,7 @@ describe 'Test Item Handling' do
       it 'SECURITY: should prevent basic SQL injection targeting IDs' do
         LostNFound::Item.create(name: 'New Item', type: 'New Type')
         LostNFound::Item.create(name: 'Newer Item', type: 'Newer Type')
-        get 'api/v1/projects/2%20or%20id%3E0'
+        get 'api/v1/items/2%20or%20id%3E0'
 
         # deliberately not reporting error -- don't give attacker information
         _(last_response.status).must_equal 404
