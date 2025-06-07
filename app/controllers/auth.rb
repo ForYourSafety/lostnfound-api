@@ -10,7 +10,7 @@ module LostNFound
       routing.on 'register' do
         # POST api/v1/auth/register
         routing.post do
-          reg_data = JSON.parse(request.body.read, symbolize_names: true)
+          reg_data = HttpRequest.new(routing).body_data
           VerifyRegistration.new(reg_data).call
 
           response.status = 202
