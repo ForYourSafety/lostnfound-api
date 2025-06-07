@@ -31,6 +31,7 @@ module LostNFound
       # Load crypto keys
       SecureDB.setup(ENV.delete('DB_KEY'))
       AuthToken.setup(ENV.fetch('MSG_KEY'))
+      SignedRequest.setup(ENV.delete('VERIFY_KEY'), ENV.delete('SIGNING_KEY'))
 
       # Custom events logging
       LOGGER = Logger.new($stderr)
@@ -38,6 +39,7 @@ module LostNFound
     end
     # rubocop:enable Lint/ConstantDefinitionInBlock
 
+    # HTTP Request logging
     configure :development, :production do
       plugin :common_logger, $stdout
     end

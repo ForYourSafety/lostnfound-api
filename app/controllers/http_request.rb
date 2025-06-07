@@ -28,5 +28,10 @@ module LostNFound
     def body_data
       JSON.parse(@routing.body.read, symbolize_names: true)
     end
+
+    def signed_body_data
+      binding.irb
+      SignedRequest.parse(body_data)
+    end
   end
 end
