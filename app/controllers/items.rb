@@ -81,13 +81,8 @@ module LostNFound
         # GET /api/v1/items
         routing.get do
           items = ItemPolicy::AccountScope.new(@auth_account).viewable
-          all_tags = Tag.all
 
-          included = {
-            all_tags:
-          }
-
-          JSON.pretty_generate(data: items, included:)
+          JSON.pretty_generate(data: items)
         rescue StandardError
           routing.halt 403, { message: 'Could not find any items' }.to_json
         end
