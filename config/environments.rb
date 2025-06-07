@@ -31,6 +31,7 @@ module LostNFound
       # Load crypto keys
       SecureDB.setup(ENV.delete('DB_KEY'))
       AuthToken.setup(ENV.fetch('MSG_KEY'))
+      SignedRequest.setup(ENV.delete('VERIFY_KEY'), ENV.delete('SIGNING_KEY'))
 
       # Setup S3 storage
       S3Storage.setup(
@@ -47,6 +48,7 @@ module LostNFound
     end
     # rubocop:enable Lint/ConstantDefinitionInBlock
 
+    # HTTP Request logging
     configure :development, :production do
       plugin :common_logger, $stdout
     end
