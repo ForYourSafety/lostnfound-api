@@ -36,12 +36,21 @@ module LostNFound
       routing.is 'authenticate' do
         # POST /api/v1/auth/authenticate
         routing.post do
-          # credentials = HttpRequest.new(routing).body_data
           auth_account = AuthenticateAccount.call(@request_data)
           { data: auth_account }.to_json
         rescue AuthenticateAccount::UnauthorizedError
           routing.halt '403', { message: 'Invalid credentials' }.to_json
         end
+      end
+      # POST /api/v1/auth/authenticate/sso
+      routing.post 'sso' do
+        auth_account = AuthenticateSso.new.call(@request_data[:access_token])
+        { data: auth_account }.to_json
+      rescue StandardError => e
+        Api.logger.warn "FAILED to validate GitHub account: #{e.inspect}" \
+                        "\n#{e.backtrace}"
+
+        routing.halt 400
       end
     end
   end

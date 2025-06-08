@@ -12,7 +12,7 @@ module LostNFound
 
     # All contacts for an item
     def self.call(auth:, item:)
-      policy = ItemPolicy.new(auth, item)
+      policy = ItemPolicy.new(auth, item, auth.scope)
       raise ForbiddenError unless policy.can_view_contacts?
 
       item.contacts.map(&:to_h)
