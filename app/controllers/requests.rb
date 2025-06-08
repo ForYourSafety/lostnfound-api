@@ -43,6 +43,37 @@ module LostNFound
           Api.logger.error "UNKNOWN ERROR: #{e.message}"
           routing.halt 500, { message: 'Unknown server error' }.to_json
         end
+
+        # PATCH api/v1/requests/:request_id
+        routing.patch do
+          merge_patch = JSON.parse(routing.body.read)
+
+          routing.halt 400, { message: 'Missing status' }.to_json if merge_patch['status'].nil?
+
+          # Only accepts approved and declined status
+          unless %w[approved declined].include?(merge_patch['status'])
+            routing.halt 400, { message: 'Invalid status' }.to_json
+          end
+
+          updated_request = UpdateRequest.call(
+            auth: @auth,
+            request_id: request_id,
+            merge_patch: merge_patch
+          )
+
+          response.status = 200
+          { message: 'Request updated', data: updated_request }.to_json
+        rescue UpdateRequest::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue UpdateRequest::NotFoundError => e
+          routing.halt 404, { message: e.message }.to_json
+        rescue Sequel::MassAssignmentRestriction
+          Api.logger.warn "MASS-ASSIGNMENT: #{merge_patch.keys}"
+          routing.halt 400, { message: 'Illegal Attributes' }.to_json
+        rescue StandardError => e
+          Api.logger.error "UNKNOWN ERROR: #{e.message}"
+          routing.halt 500, { message: 'Unknown server error' }.to_json
+        end
       end
     end
   end
