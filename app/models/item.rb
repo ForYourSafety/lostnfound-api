@@ -50,6 +50,7 @@ module LostNFound
           id:,
           type:,
           name:,
+          challenge_question:,
           created_by:,
           resolved:
         }
