@@ -48,6 +48,7 @@ module LostNFound
     end
     # rubocop:enable Lint/ConstantDefinitionInBlock
 
+    # HTTP Request logging
     configure :development, :production do
       plugin :common_logger, $stdout
     end

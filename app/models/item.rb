@@ -49,7 +49,8 @@ module LostNFound
     def full_details_with_contacts
       full_details.merge(
         relationships: {
-          contacts: contacts.map(&:to_h)
+          tags:,
+          contacts:
         }
       )
     end

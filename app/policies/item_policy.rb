@@ -4,9 +4,10 @@ module LostNFound
   # Item policy for accounts
 
   class ItemPolicy # rubocop:disable Style/Documentation
-    def initialize(auth, item)
+    def initialize(auth, item, auth_scope = nil)
       @account = auth.account if auth
       @item = item
+      @auth_scope = auth_scope
     end
 
     def can_view?
@@ -14,11 +15,11 @@ module LostNFound
     end
 
     def can_edit?
-      item_poster?
+      can_write? && item_poster?
     end
 
     def can_delete?
-      item_poster?
+      can_write? && item_poster?
     end
 
     def can_resolve?
@@ -26,11 +27,11 @@ module LostNFound
     end
 
     def can_add_contact?
-      item_poster?
+      can_write? && item_poster?
     end
 
     def can_remove_contact?
-      item_poster?
+      can_write? && item_poster?
     end
 
     def can_view_contacts?
@@ -38,15 +39,15 @@ module LostNFound
     end
 
     def can_add_tag?
-      item_poster?
+      can_write? && item_poster?
     end
 
     def can_remove_tag?
-      item_poster?
+      can_write? && item_poster?
     end
 
     def can_request?
-      logged_in? && !item_poster? && !item_resolved?
+      logged_in? && !can_view_contacts? && !item_resolved?
     end
 
     def summary # rubocop:disable Metrics/MethodLength
@@ -64,6 +65,14 @@ module LostNFound
     end
 
     private
+
+    def can_read?
+      @auth_scope ? @auth_scope.can_read?('items') : false
+    end
+
+    def can_write?
+      @auth_scope ? @auth_scope.can_write?('items') : false
+    end
 
     def logged_in?
       !@account.nil?

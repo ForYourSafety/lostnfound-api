@@ -28,7 +28,7 @@ module LostNFound
       item = Item.first(id: item_id)
       raise(ItemNotFoundError) unless item
 
-      policy = ItemPolicy.new(auth, item)
+      policy = ItemPolicy.new(auth, item, auth.scope)
       raise ForbiddenError unless policy.can_add_contact?
 
       add_item_contact(item: item, contact_data: contact_data)

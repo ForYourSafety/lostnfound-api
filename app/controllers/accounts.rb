@@ -28,9 +28,9 @@ module LostNFound
 
       # POST api/v1/accounts
       routing.post do
-        account_data = HttpRequest.new(routing).signed_body_data
-        new_account = Account.create(account_data)
-        # raise('Could not save account') unless new_account.save_changes
+        new_data = HttpRequest.new(routing).signed_body_data
+        new_account = Account.new(new_data)
+        raise('Could not save account') unless new_account.save_changes
 
         response.status = 201
         response['Location'] = "#{@account_route}/#{new_account.username}"

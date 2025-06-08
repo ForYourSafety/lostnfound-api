@@ -23,7 +23,7 @@ module LostNFound
       item = Item.first(id: item_id)
       raise(ItemNotFound) unless item
 
-      policy = ItemPolicy.new(auth, item)
+      policy = ItemPolicy.new(auth, item, auth.scope)
       raise(ForbiddenError) unless policy.can_request?
 
       add_request_to_item(requester: auth.account, item: item, request_data: request_data)

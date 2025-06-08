@@ -21,7 +21,7 @@ module LostNFound
       item = Item.first(id: item_id)
       raise NotFoundError unless item
 
-      policy = ItemPolicy.new(auth, item)
+      policy = ItemPolicy.new(auth, item, auth.scope)
       raise ForbiddenError unless policy.can_view?
 
       item_details = policy.can_view_contacts? ? item.full_details_with_contacts : item.full_details

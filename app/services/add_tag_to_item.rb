@@ -34,7 +34,7 @@ module LostNFound
       # Ensure the item and tag are not already associated
       raise(ItemAlreadyHasTagError) if item.tags.include?(tag)
 
-      policy = ItemPolicy.new(auth, item)
+      policy = ItemPolicy.new(auth, item, auth.scope)
       raise(ForbiddenError) unless policy.can_add_tag?
 
       add_tag_to_item(item: item, tag: tag)

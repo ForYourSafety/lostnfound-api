@@ -14,13 +14,26 @@ def wipe_database
   LostNFound::Account.map(&:destroy)
 end
 
-def auth_header(account_data)
-  auth = LostNFound::AuthenticateAccount.call(
+def authenticate(account_data)
+  LostNFound::AuthenticateAccount.call(
     username: account_data['username'],
     password: account_data['password']
   )
+end
 
-  "Bearer #{auth[:attributes][:auth_token]}"
+def auth_header(account_data)
+  authenticated_account = authenticate(account_data)
+
+  "Bearer #{authenticated_account[:attributes][:auth_token]}"
+end
+
+def authorization(account_data)
+  authenticated_account = authenticate(account_data)
+
+  token = AuthToken.new(authenticated_account[:attributes][:auth_token])
+  account_data = token.payload['attributes']
+  account = LostNFound::Account.first(username: account_data['username'])
+  LostNFound::AuthorizedAccount.new(account, token.scope)
 end
 
 DATA = {
@@ -28,3 +41,10 @@ DATA = {
   contacts: YAML.load_file('db/seeds/contact_seeds.yml'),
   items: YAML.load_file('db/seeds/item_seeds.yml')
 }.freeze
+
+## SSO fixtures
+GO_ACCOUNT_RESPONSE = YAML.load(
+  File.read('spec/fixtures/google_token_response.yml')
+)
+GOOD_GO_ACCESS_TOKEN = GO_ACCOUNT_RESPONSE.keys.first
+SSO_ACCOUNT = YAML.load(File.read('spec/fixtures/sso_account.yml'))
