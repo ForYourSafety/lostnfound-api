@@ -12,7 +12,7 @@ module LostNFound
 
     plugin :uuid, field: :id
 
-    plugin :association_dependencies, items: :destroy
+    plugin :association_dependencies, items: :destroy, requests: :destroy
 
     plugin :whitelist_security
     set_allowed_columns :username, :password, :email, :student_id, :name_on_id
