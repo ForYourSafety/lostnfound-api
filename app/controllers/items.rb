@@ -80,7 +80,7 @@ module LostNFound
       routing.is do
         # GET /api/v1/items
         routing.get do
-          items = ItemPolicy::AccountScope.new(@auth_account).viewable
+          items = ItemPolicy::AccountScope.new(@auth_account).public_view
 
           JSON.pretty_generate(data: items)
         rescue StandardError
