@@ -20,7 +20,7 @@ module LostNFound
     plugin :timestamps, update_on_create: true
 
     plugin :whitelist_security
-    set_allowed_columns :type, :name, :description, :location, :challenge_question
+    set_allowed_columns :type, :name, :description, :location, :time, :challenge_question
 
     def to_h # rubocop:disable Metrics/MethodLength
       {
@@ -34,6 +34,7 @@ module LostNFound
           challenge_question:,
           image_keys:,
           created_by:,
+          time:,
           resolved:
         },
         relationships: {
