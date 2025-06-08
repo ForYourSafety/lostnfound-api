@@ -36,13 +36,13 @@ module LostNFound
         response['Location'] = "#{@account_route}/#{new_account.username}"
         { message: 'Account saved', data: new_account }.to_json
       rescue Sequel::MassAssignmentRestriction
-        Api.logger.warn "MASS-ASSIGNMENT:: #{new_data.keys}"
+        Api.logger.warn "MASS-ASSIGNMENT:: #{account_data.keys}"
         routing.halt 400, { message: 'Illegal Request' }.to_json
       rescue SignedRequest::VerificationError
         routing.halt 403, { message: 'Must sign request' }.to_json
-      rescue StandardError => e
-        Api.logger.error 'ACCOUNT SAVING ERROR'
-        routing.halt 500, { message: e.message }.to_json
+      rescue StandardError
+        Api.logger.error 'Unknown error saving account'
+        routing.halt 500, { message: 'Error creating account' }.to_json
       end
     end
   end
