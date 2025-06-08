@@ -152,10 +152,10 @@ module LostNFound
 
         # POST /api/v1/items
         routing.post do
-          json_data = if request.content_type.start_with?('multipart/form-data')
-                        routing.params.delete('data')
-                      else
+          json_data = if request.content_type == 'application/json'
                         routing.body.read
+                      else
+                        routing.params.delete('data')
                       end
           new_data = JSON.parse(json_data)
 
