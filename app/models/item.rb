@@ -43,6 +43,19 @@ module LostNFound
       }
     end
 
+    def summary
+      {
+        type: 'item',
+        attributes: {
+          id:,
+          type:,
+          name:,
+          created_by:,
+          resolved:
+        }
+      }
+    end
+
     def full_details
       to_h
     end
