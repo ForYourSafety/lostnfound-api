@@ -11,13 +11,15 @@ module LostNFound
       end
 
       def mine
-        @full_scope.where(requested_by: @current_account.id).all
+        @full_scope.where(requester_id: @current_account.account.id).all
       end
 
       def to_me
         return [] if @current_account.nil?
 
-        @full_scope.join(:items, id: :item_id).where(Sequel[:items][:created_by] => @current_account.id).all
+        @full_scope.join(:items, id: :item_id)
+                   .where(Sequel[:items][:created_by] => @current_account.account.id)
+                   .all
       end
 
       private
@@ -38,10 +40,10 @@ module LostNFound
       def viewable
         return [] if @current_account.nil?
 
-        if @item.created_by == @current_account.id
+        if @item.created_by == @current_account.account.id
           @full_scope.all # Item owner sees all requests
         else
-          @full_scope.where(requested_by: @current_account.id).all # Non-owners see only their own requests
+          @full_scope.where(requester_id: @current_account.account.id).all # Non-owners see only their own requests
         end
       end
 
