@@ -67,7 +67,10 @@ module LostNFound
             item = Item.first(id: item_id)
             routing.halt 404, { message: 'Item not found' }.to_json unless item
 
-            requests = RequestPolicy::AccountItemScope.new(@auth, item).viewable
+            requests = GetItemRequestsQuery.call(
+              auth: @auth,
+              item: item
+            )
 
             { data: requests }.to_json
           rescue StandardError => e
