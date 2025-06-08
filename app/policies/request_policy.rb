@@ -4,17 +4,18 @@ module LostNFound
   # Item policy for accounts
 
   class RequestPolicy # rubocop:disable Style/Documentation
-    def initialize(auth, request)
+    def initialize(auth, request, auth_scope = nil)
       @account = auth.account if auth
       @request = request
+      @auth_scope = auth_scope
     end
 
     def can_view?
-      item_poster? || requester?
+      can_read? && (item_poster? || requester?)
     end
 
     def can_delete?
-      requester?
+      can_write? && requester?
     end
 
     def can_reply?
@@ -30,6 +31,14 @@ module LostNFound
     end
 
     private
+
+    def can_read?
+      @auth_scope ? @auth_scope.can_read?('documents') : false
+    end
+
+    def can_write?
+      @auth_scope ? @auth_scope.can_write?('documents') : false
+    end
 
     def logged_in?
       !@account.nil?
