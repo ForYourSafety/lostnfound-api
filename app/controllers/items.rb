@@ -69,7 +69,12 @@ module LostNFound
 
             requests = RequestPolicy::AccountItemScope.new(@auth, item).viewable
 
-            { data: requests }.to_json
+            response_data = {
+              item: item,
+              requests: requests
+            }
+
+            { data: response_data }.to_json
           rescue StandardError => e
             Api.logger.error "UNKNOWN ERROR: #{e.message}"
             routing.halt 500, { message: 'Unknown server error' }.to_json
