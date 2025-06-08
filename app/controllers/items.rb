@@ -141,6 +141,37 @@ module LostNFound
           Api.logger.error "UNKNOWN ERROR: #{e.message}"
           routing.halt 500, { message: 'Unknown server error' }.to_json
         end
+
+        # PATCH api/v1/items/:item_id
+        routing.patch do
+          merge_patch = JSON.parse(routing.body.read)
+
+          routing.halt 400, { message: 'Missing resolved' }.to_json if merge_patch['resolved'].nil?
+
+          # Only accepts resolved
+          unless merge_patch.keys.all? { |k| %w[resolved].include?(k) }
+            routing.halt 400, { message: 'Invalid attributes' }.to_json
+          end
+
+          # Only accepts 1 for resolved
+          routing.halt 400, { message: 'Invalid resolved value' }.to_json unless merge_patch['resolved'] == 1
+
+          updated_item = UpdateItem.resolve(
+            auth: @auth,
+            item_id: item_id,
+            resolved: merge_patch['resolved'] == 1
+          )
+
+          response.status = 200
+          { message: 'Item updated', data: updated_item }.to_json
+        rescue UpdateItem::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue UpdateItem::NotFoundError => e
+          routing.halt 404, { message: e.message }.to_json
+        rescue StandardError => e
+          Api.logger.error "UNKNOWN ERROR: #{e.message}"
+          routing.halt 500, { message: 'Unknown server error' }.to_json
+        end
       end
 
       routing.is do
