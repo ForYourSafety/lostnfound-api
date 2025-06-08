@@ -16,7 +16,7 @@ module LostNFound
     plugin :enum
     enum :type, lost: 0, found: 1
 
-    plugin :association_dependencies, contacts: :destroy, tags: :nullify
+    plugin :association_dependencies, contacts: :destroy, tags: :nullify, requests: :destroy
     plugin :timestamps, update_on_create: true
 
     plugin :whitelist_security
