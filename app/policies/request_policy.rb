@@ -14,7 +14,7 @@ module LostNFound
     end
 
     def can_delete?
-      requester?
+      requester? && !answered?
     end
 
     def can_reply?
