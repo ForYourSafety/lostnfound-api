@@ -10,6 +10,25 @@ module LostNFound
       @account_route = "#{@api_root}/accounts"
 
       routing.on String do |username|
+        routing.on 'requests' do
+          @requests_route = "#{@account_route}/#{username}/requests"
+          # GET api/v1/accounts/[username]/requests
+          # Request made by an account
+          routing.get do
+            requests = GetAccountRequestsQuery.call(
+              auth: @auth,
+              username: username
+            )
+
+            { data: requests }.to_json
+          rescue GetAccountRequestsQuery::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue StandardError => e
+            puts "GET ACCOUNT REQUESTS ERROR: #{e.inspect}"
+            routing.halt 500, { message: 'API Server Error' }.to_json
+          end
+        end
+
         # GET api/v1/accounts/[username]
         routing.get do
           auth = AuthorizeAccount.call(
