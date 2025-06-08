@@ -16,7 +16,7 @@ module LostNFound
 
       def mine
         nil if @current_account.nil?
-        @full_scope.where(account_id: @current_account.id).all
+        @full_scope.where(created_by: @current_account.account.id).all
       end
 
       private
