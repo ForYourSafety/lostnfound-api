@@ -59,6 +59,63 @@ module LostNFound
           end
         end
 
+        routing.on 'requests' do
+          @requests_route = "#{@api_root}/items/#{item_id}/requests"
+
+          routing.on String do |request_id|
+            routing.is do
+              # GET /api/v1/items/:item_id/requests/:request_id
+              routing.get do
+              end
+
+              # DELETE /api/v1/items/:item_id/requests/:request_id
+              routing.delete do
+              end
+            end
+          end
+
+          # GET /api/v1/items/:item_id/requests
+          routing.get do
+            item = Item.first(id: item_id)
+            routing.halt 404, { message: 'Item not found' }.to_json unless item
+
+            requests = RequestPolicy::AccountItemScope.new(@auth, item).viewable
+
+            { data: requests }.to_json
+          rescue StandardError => e
+            Api.logger.error "UNKNOWN ERROR: #{e.message}"
+            routing.halt 500, { message: 'Unknown server error' }.to_json
+          end
+
+          # POST /api/v1/items/:item_id/requests
+          routing.post do
+            new_data = JSON.parse(routing.body.read)
+            item = Item.first(id: item_id)
+
+            routing.halt 404, { message: 'Item not found' }.to_json unless item
+
+            new_request = CreateRequestToItem.call(
+              auth: @auth,
+              item_id: item.id,
+              request_data: new_data
+            )
+
+            response.status = 201
+            response['Location'] = "#{@requests_route}/#{new_request.id}"
+            { message: 'Request saved', data: new_request }.to_json
+          rescue CreateRequestToItem::ForbiddenError => e
+            routing.halt 403, { message: e.message }.to_json
+          rescue CreateRequestToItem::IllegalRequestError => e
+            routing.halt 400, { message: e.message }.to_json
+          rescue Sequel::MassAssignmentRestriction
+            Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+            routing.halt 400, { message: 'Illegal Attributes' }.to_json
+          rescue StandardError => e
+            Api.logger.error "UNKNOWN ERROR: #{e.message}"
+            routing.halt 500, { message: 'Unknown server error' }.to_json
+          end
+        end
+
         # GET api/v1/items/:item_id
         routing.get do
           item = GetItemQuery.call(
