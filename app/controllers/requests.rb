@@ -9,7 +9,7 @@ module LostNFound
     route('requests') do |routing|
       @item_route = "#{@api_root}/requests"
       routing.on String do |request_id|
-        # GET api/v1/requests/:request_id
+        # GET /api/v1/requests/:request_id
         routing.get do
           item = GetRequestQuery.call(
             auth: @auth,
@@ -26,7 +26,7 @@ module LostNFound
           routing.halt 500, { message: 'API server error' }.to_json
         end
 
-        # DELETE api/v1/requests/:request_id
+        # DELETE /api/v1/requests/:request_id
         routing.delete do
           deleted_request = DeleteRequest.call(
             auth: @auth,
@@ -44,7 +44,7 @@ module LostNFound
           routing.halt 500, { message: 'Unknown server error' }.to_json
         end
 
-        # PATCH api/v1/requests/:request_id
+        # PATCH /api/v1/requests/:request_id
         routing.patch do
           merge_patch = JSON.parse(routing.body.read)
 
@@ -74,6 +74,18 @@ module LostNFound
           Api.logger.error "UNKNOWN ERROR: #{e.message}"
           routing.halt 500, { message: 'Unknown server error' }.to_json
         end
+      end
+
+      # GET /api/v1/requests
+      routing.get do
+        requests = GetRequestsQuery.call(
+          auth: @auth
+        )
+
+        { data: requests }.to_json
+      rescue StandardError => e
+        puts "GET ACCOUNT REQUESTS ERROR: #{e.inspect}"
+        routing.halt 500, { message: 'API Server Error' }.to_json
       end
     end
   end
