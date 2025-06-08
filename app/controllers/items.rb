@@ -75,6 +75,24 @@ module LostNFound
           puts "FIND ITEM ERROR: #{e.inspect}"
           routing.halt 500, { message: 'API server error' }.to_json
         end
+
+        # DELETE api/v1/items/:item_id
+        routing.delete do
+          deleted_item = DeleteItem.call(
+            auth: @auth,
+            item_id: item_id
+          )
+
+          response.status = 204
+          { message: 'Item deleted', data: deleted_item }.to_json
+        rescue DeleteItem::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue DeleteItem::NotFoundError => e
+          routing.halt 404, { message: e.message }.to_json
+        rescue StandardError => e
+          Api.logger.error "UNKNOWN ERROR: #{e.message}"
+          routing.halt 500, { message: 'Unknown server error' }.to_json
+        end
       end
 
       routing.is do
