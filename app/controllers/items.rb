@@ -62,18 +62,6 @@ module LostNFound
         routing.on 'requests' do
           @requests_route = "#{@api_root}/items/#{item_id}/requests"
 
-          routing.on String do |request_id|
-            routing.is do
-              # GET /api/v1/items/:item_id/requests/:request_id
-              routing.get do
-              end
-
-              # DELETE /api/v1/items/:item_id/requests/:request_id
-              routing.delete do
-              end
-            end
-          end
-
           # GET /api/v1/items/:item_id/requests
           routing.get do
             item = Item.first(id: item_id)
