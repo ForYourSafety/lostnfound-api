@@ -23,7 +23,7 @@ module LostNFound
       private
 
       def all_items
-        Item.order(:created_at).reverse
+        Item.order(Sequel[:items][:created_at]).reverse
       end
     end
   end

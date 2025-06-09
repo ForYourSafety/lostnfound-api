@@ -25,7 +25,7 @@ module LostNFound
       private
 
       def all_requests
-        Request.order(:created_at).reverse
+        Request.order(Sequel[:requests][:created_at]).reverse
       end
     end
 
@@ -50,7 +50,7 @@ module LostNFound
       private
 
       def all_requests_to_item
-        Request.where(item_id: @item.id).order(:created_at).reverse
+        Request.where(item_id: @item.id).order(Sequel[:requests][:created_at]).reverse
       end
     end
   end
