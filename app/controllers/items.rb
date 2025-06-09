@@ -172,6 +172,39 @@ module LostNFound
           Api.logger.error "UNKNOWN ERROR: #{e.message}"
           routing.halt 500, { message: 'Unknown server error' }.to_json
         end
+
+        # PUT api/v1/items/:item_id
+        routing.put do
+          json_data = if request.content_type == 'application/json'
+                        routing.body.read
+                      else
+                        routing.params.delete('data')
+                      end
+          new_data = JSON.parse(json_data)
+
+          images = routing.params.delete('images') || []
+
+          new_item = UpdateItem.update(
+            auth: @auth,
+            item_id: item_id,
+            new_data: new_data,
+            new_images: images
+          )
+
+          response.status = 200
+          response['Location'] = "#{@item_route}/#{new_item.id}"
+          { message: 'Item saved', data: new_item }.to_json
+        rescue UpdateItem::ForbiddenError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue CreateItemForOwner::InvalidImageError => e
+          routing.halt 400, { message: e.message }.to_json
+        rescue Sequel::MassAssignmentRestriction
+          Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
+          routing.halt 400, { message: 'Illegal Attributes' }.to_json
+        rescue StandardError => e
+          Api.logger.error "UNKNOWN ERROR: #{e.message}"
+          routing.halt 500, { message: 'Unknown server error' }.to_json
+        end
       end
 
       routing.is do
