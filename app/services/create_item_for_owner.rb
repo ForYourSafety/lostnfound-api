@@ -42,7 +42,11 @@ module LostNFound
       item.image_keys = image_keys.join(',') if image_keys.any?
       item.save_changes
 
-      notify_owner(item: item, owner_name: owner_name, owner_student_id: owner_student_id)
+      SendOwnerNotification.new(
+        item: item,
+        owner_name: owner_name,
+        owner_student_id: owner_student_id
+      ).call
 
       item
     end
@@ -85,12 +89,6 @@ module LostNFound
           contact_data: contact_data
         )
       end
-    end
-
-    def self.notify_owner(item:, owner_name:, owner_student_id:)
-      return unless owner_name.nil? && owner_student_id.nil?
-
-      nil
     end
 
     def self.add_item_for_owner(owner:, item_data:)
