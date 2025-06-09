@@ -7,7 +7,7 @@ module LostNFound
     def initialize(auth, item, auth_scope = nil)
       @account = auth.account if auth
       @item = item
-      @auth_scope = auth_scope.nil? ? auth.scope : auth_scope
+      @auth_scope = auth_scope.nil? ? auth&.scope : auth_scope
     end
 
     def can_view?
