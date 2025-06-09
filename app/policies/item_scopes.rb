@@ -11,7 +11,7 @@ module LostNFound
       end
 
       def public_view
-        @full_scope.where(resolved: false).all
+        @full_scope.where(resolved: 0).all
       end
 
       def mine
