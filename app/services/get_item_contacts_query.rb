@@ -12,6 +12,7 @@ module LostNFound
 
     # All contacts for an item
     def self.call(auth:, item:)
+      binding.irb
       policy = ItemPolicy.new(auth, item, auth.scope)
       raise ForbiddenError unless policy.can_view_contacts?
 

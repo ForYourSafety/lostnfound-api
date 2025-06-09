@@ -6,3 +6,15 @@
 
 - name: Valuables
   description: Items like cash, credit cards, or important documents
+
+- name: Creatures
+  description: Items like pets or animals
+
+- name: Clothing
+  description: Items like clothes, shoes, or accessories
+
+- name: Bags
+  description: Items like backpacks, purses, or suitcases
+
+- name: Electronics
+  description: Items like cameras, headphones, or chargers

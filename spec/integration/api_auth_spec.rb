@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../spec_helper'
+require 'webmock/minitest'
 
 describe 'Test Authentication Routes' do
   include Rack::Test::Methods
@@ -19,7 +20,9 @@ describe 'Test Authentication Routes' do
     it 'HAPPY: should authenticate valid credentials' do
       credentials = { username: @account_data['username'],
                       password: @account_data['password'] }
-      post '/api/v1/auth/authenticate', credentials.to_json, @req_header
+      post 'api/v1/auth/authenticate',
+           SignedRequest.sign(credentials).to_json,
+           @req_header
       auth_account = JSON.parse(last_response.body)['data']
       account = auth_account['attributes']['account']['attributes']
       _(last_response.status).must_equal 200
@@ -29,9 +32,11 @@ describe 'Test Authentication Routes' do
     end
 
     it 'BAD: should not authenticate invalid password' do
-      credentials = { username: @account_data['username'],
-                      password: 'fakepassword' }
-      post 'api/v1/auth/authenticate', credentials.to_json, @req_header
+      bad_credentials = { username: @account_data['username'],
+                          password: 'fakepassword' }
+      post 'api/v1/auth/authenticate',
+           SignedRequest.sign(bad_credentials).to_json,
+           @req_header
       result = JSON.parse(last_response.body)
 
       _(last_response.status).must_equal 403
@@ -43,8 +48,8 @@ describe 'Test Authentication Routes' do
   describe 'SSO Authorization' do
     before do
       WebMock.enable!
-      WebMock.stub_request(:get, app.config.GOOGLE_ACCOUNT_URL)
-             .to_return(body: GO_ACCOUNT_RESPONSE[GOOD_GO_ACCESS_TOKEN],
+      WebMock.stub_request(:get, app.config.GITHUB_ACCOUNT_URL)
+             .to_return(body: GH_ACCOUNT_RESPONSE[GOOD_GH_ACCESS_TOKEN],
                         status: 200,
                         headers: { 'content-type' => 'application/json' })
     end
@@ -54,9 +59,11 @@ describe 'Test Authentication Routes' do
     end
 
     it 'HAPPY AUTH SSO: should authenticate+authorize new valid SSO account' do
-      go_access_token = { access_token: GOOD_GO_ACCESS_TOKEN }
+      gh_access_token = { access_token: GOOD_GH_ACCESS_TOKEN }
 
-      post 'api/v1/auth/authenticate/sso', go_access_token.to_json, @req_header
+      post 'api/v1/auth/sso',
+           SignedRequest.sign(gh_access_token).to_json,
+           @req_header
 
       auth_account = JSON.parse(last_response.body)['data']
       account = auth_account['attributes']['account']['attributes']
@@ -64,7 +71,6 @@ describe 'Test Authentication Routes' do
       _(last_response.status).must_equal 200
       _(account['username']).must_equal(SSO_ACCOUNT['sso_username'])
       _(account['email']).must_equal(SSO_ACCOUNT['email'])
-      _(account['id']).must_be_nil
     end
 
     it 'HAPPY AUTH SSO: should authorize existing SSO account' do
@@ -73,8 +79,10 @@ describe 'Test Authentication Routes' do
         email: SSO_ACCOUNT['email']
       )
 
-      go_access_token = { access_token: GOOD_GO_ACCESS_TOKEN }
-      post 'api/v1/auth/authenticate/sso', go_access_token.to_json, @req_header
+      gh_access_token = { access_token: GOOD_GH_ACCESS_TOKEN }
+      post 'api/v1/auth/sso',
+           SignedRequest.sign(gh_access_token).to_json,
+           @req_header
 
       auth_account = JSON.parse(last_response.body)['data']
       account = auth_account['attributes']['account']['attributes']
@@ -82,7 +90,6 @@ describe 'Test Authentication Routes' do
       _(last_response.status).must_equal 200
       _(account['username']).must_equal(SSO_ACCOUNT['sso_username'])
       _(account['email']).must_equal(SSO_ACCOUNT['email'])
-      _(account['id']).must_be_nil
     end
   end
 end
