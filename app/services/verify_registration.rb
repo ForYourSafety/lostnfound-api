@@ -44,7 +44,7 @@ module LostNFound
 
       Mailjet.send_email(
         to: to,
-        subject: 'LostNFound Platform Registration Verification',
+        subject: '[LostNFound] Registration Verification',
         body: html_email
       )
     rescue Mailjet::EmailProviderError => e
