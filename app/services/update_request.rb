@@ -26,6 +26,12 @@ module LostNFound
       raise ForbiddenError unless policy.can_reply?
 
       set_reply_status(request, merge_patch['status'])
+
+      SendRequestRepliedNotification.new(
+        request: request
+      ).call
+
+      request
     end
 
     def self.set_reply_status(request, status)
