@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rack/utils'
+
 module LostNFound
   # Notify the owner about the possible lost item
   class SendOwnerNotification
@@ -12,6 +14,13 @@ module LostNFound
     def subject = "[LostNFound] Possible lost item of yours: #{@item.name}"
 
     def html_mail
+      item_name = Rack::Utils.escape_html(@item.name)
+      item_description = if @item.description
+                           Rack::Utils.escape_html(@item.description)
+                         else
+                           'No description provided.'
+                         end
+
       <<~HTML
         <h1>Possible Lost Item Notification</h1>
         <p>
@@ -19,8 +28,8 @@ module LostNFound
         Someone has found an item that matches your details:
         </p>
         <p>
-        <strong>Item Name:</strong> #{@item.name}<br>
-        <strong>Description:</strong> #{@item.description}<br>
+        <strong>Item Name:</strong> #{item_name}<br>
+        <strong>Description:</strong> #{item_description}<br>
         </p>
         <p>Click <a href="#{Api.config.APP_URL}/items/#{@item.id}">here</a> to view the item.</p>
         <p>
