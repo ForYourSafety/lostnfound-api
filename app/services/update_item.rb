@@ -38,7 +38,7 @@ module LostNFound
 
       delete_image_keys = current_images - updated_images
 
-      item.update(new_data)
+      update_item(item: item, item_data: new_data)
 
       update_tags(auth: auth, item: item, tag_ids: tag_ids)
       update_contacts(item: item, contacts: contacts)
@@ -103,6 +103,12 @@ module LostNFound
       delete_image_keys.each do |image_key|
         S3Storage.delete(object_key: image_key)
       end
+    end
+
+    def self.update_item(item:, item_data:)
+      new_item = item_data.clone
+      new_item['type'] = new_item['type'].to_sym # Convert string to enum
+      item.update(new_item)
     end
   end
 end
