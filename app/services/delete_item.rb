@@ -37,7 +37,7 @@ module LostNFound
         S3Storage.delete(object_key: image_key)
       end
     rescue StandardError => e
-      App.logger.warn("Failed to delete images: #{e.message}")
+      Api.logger.warn("Failed to delete images: #{e.message}")
     end
   end
 end

@@ -212,7 +212,7 @@ module LostNFound
 
           JSON.pretty_generate(data: items)
         rescue StandardError => e
-          App.logger.error "UNKNOWN ERROR: #{e.message}, #{e.backtrace.join("\n")}"
+          Api.logger.error "UNKNOWN ERROR: #{e.message}, #{e.backtrace.join("\n")}"
           routing.halt 500, { message: 'Unknown server error' }.to_json
         end
 
