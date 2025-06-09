@@ -88,9 +88,7 @@ module LostNFound
 
     def self.update_contacts(item:, contacts:)
       # Remove existing contacts
-      item.contacts.each do |contact|
-        contact.destroy
-      end
+      item.contacts.each(&:destroy)
 
       # Add new contacts
       contacts.each do |contact_data|
@@ -102,7 +100,7 @@ module LostNFound
     end
 
     def self.delete_image(delete_image_keys)
-      for image_key in delete_image_keys
+      delete_image_keys.each do |image_key|
         S3Storage.delete(object_key: image_key)
       end
     end
