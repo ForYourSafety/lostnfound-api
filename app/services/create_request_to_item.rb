@@ -26,7 +26,14 @@ module LostNFound
       policy = ItemPolicy.new(auth, item)
       raise(ForbiddenError) unless policy.can_request?
 
-      add_request_to_item(requester: auth.account, item: item, request_data: request_data)
+      request = add_request_to_item(requester: auth.account, item: item, request_data: request_data)
+
+      SendItemRequestNotification.new(
+        item: item,
+        request: request
+      ).call
+
+      request
     end
 
     # Creates a new request for an item by an requester

@@ -96,8 +96,6 @@ module LostNFound
             { message: 'Request saved', data: new_request }.to_json
           rescue CreateRequestToItem::ForbiddenError => e
             routing.halt 403, { message: e.message }.to_json
-          rescue CreateRequestToItem::IllegalRequestError => e
-            routing.halt 400, { message: e.message }.to_json
           rescue Sequel::MassAssignmentRestriction
             Api.logger.warn "MASS-ASSIGNMENT: #{new_data.keys}"
             routing.halt 400, { message: 'Illegal Attributes' }.to_json
