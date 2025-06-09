@@ -15,6 +15,7 @@ Sequel.migration do
       String :location
       String :challenge_question
       String :image_keys
+      Integer :time # Found at / Lost at, in seconds since epoch
       Integer :resolved, default: 0
 
       DateTime :created_at

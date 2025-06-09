@@ -15,7 +15,7 @@ module LostNFound
     end
 
     def can_edit?
-      can_write? && item_poster?
+      can_write? && item_poster? && !item_resolved?
     end
 
     def can_delete?
@@ -35,7 +35,7 @@ module LostNFound
     end
 
     def can_view_contacts?
-      item_poster? || request_approved?
+      item_poster? || (request_approved? && !item_resolved?)
     end
 
     def can_add_tag?

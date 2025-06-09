@@ -15,16 +15,16 @@ module LostNFound
     end
 
     def can_delete?
-      can_write? && requester?
+      can_write? && requester? && !answered?
     end
 
     def can_reply?
-      !answered? && item_poster?
+      !answered? && item_poster? && !item_resolved?
     end
 
     def summary
       {
-        can_edit: can_edit?,
+        can_view: can_view?,
         can_delete: can_delete?,
         can_reply: can_reply?
       }
@@ -50,6 +50,10 @@ module LostNFound
 
     def requester?
       logged_in? && @request.requester_id == @account.id
+    end
+
+    def item_resolved?
+      @request.item.resolved == 1
     end
 
     def answered?

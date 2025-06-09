@@ -28,13 +28,25 @@ module LostNFound
       images.each { |image| validate_mime_type(image) }
 
       tag_ids = item_data.delete('tag_ids') || []
+      contacts = item_data.delete('contacts') || []
+
+      owner_name = item_data.delete('owner_name')
+      owner_student_id = item_data.delete('owner_student_id')
+
       item = add_item_for_owner(owner: auth.account, item_data: item_data)
 
       handle_tags(auth: auth, item: item, tag_ids: tag_ids)
+      handle_contacts(auth: auth, item: item, contacts: contacts)
 
       image_keys = images.map { |image| upload_image(image) }
       item.image_keys = image_keys.join(',') if image_keys.any?
       item.save_changes
+
+      SendOwnerNotification.new(
+        item: item,
+        owner_name: owner_name,
+        owner_student_id: owner_student_id
+      ).call
 
       item
     end
@@ -64,6 +76,17 @@ module LostNFound
           auth: auth,
           item_id: item.id,
           tag_id: tag_id
+        )
+      end
+    end
+
+    def self.handle_contacts(auth:, item:, contacts:)
+      return unless contacts
+
+      contacts.each do |contact_data|
+        CreateContactToItem.add_item_contact(
+          item: item,
+          contact_data: contact_data
         )
       end
     end

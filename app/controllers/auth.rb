@@ -24,7 +24,7 @@ module LostNFound
         rescue VerifyRegistration::InvalidRegistration => e
           Api.logger.warn "Invalid registration: #{e.inspect}"
           routing.halt 400, { message: e.message }.to_json
-        rescue VerifyRegistration::EmailProviderError => e
+        rescue Mailjet::EmailProviderError => e
           Api.logger.error "Could not send registration email: #{e.inspect}"
           routing.halt 500, { message: 'Error sending email' }.to_json
         rescue StandardError => e

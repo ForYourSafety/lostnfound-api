@@ -10,14 +10,19 @@ module LostNFound
         @full_scope = all_items
       end
 
-      def viewable
-        @full_scope
+      def public_view
+        @full_scope.where(resolved: false).all
+      end
+
+      def mine
+        nil if @current_account.nil?
+        @full_scope.where(created_by: @current_account.account.id).all
       end
 
       private
 
       def all_items
-        Item.all
+        Item.order(:created_at).reverse
       end
     end
   end

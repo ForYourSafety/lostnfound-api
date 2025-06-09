@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'http'
-
 module LostNFound
   ## Send email verification email
   # params:
@@ -9,16 +7,10 @@ module LostNFound
   class VerifyRegistration
     # Error for invalid registration details
     class InvalidRegistration < StandardError; end
-    class EmailProviderError < StandardError; end
 
     def initialize(registration)
       @registration = registration
     end
-
-    def from_email = ENV.fetch('MAILJET_FROM_EMAIL')
-    def mail_api_key = ENV.fetch('MAILJET_API_KEY')
-    def mail_api_secret = ENV.fetch('MAILJET_API_SECRET')
-    def mail_url = ENV.fetch('MAILJET_API_URL')
 
     def call
       raise(InvalidRegistration, 'Username exists') unless username_available?
@@ -44,32 +36,20 @@ module LostNFound
       END_EMAIL
     end
 
-    def mail_json # rubocop:disable Metrics/MethodLength
-      {
-        Messages: [
-          {
-            From: {
-              Email: from_email,
-              Name: 'LostNFound Platform'
-            },
-            To: [{
-              Email: @registration[:email],
-              Name: @registration[:username]
-            }],
-            Subject: 'LostNFound Platform Registration Verification',
-            HTMLPart: html_email
-          }
-        ]
-      }
-    end
+    def send_email_verification
+      to = Mailjet::MailContact.new(
+        email: @registration[:email],
+        name: @registration[:username]
+      )
 
-    def send_email_verification # rubocop:disable Metrics/AbcSize
-      res = HTTP.basic_auth(user: mail_api_key, pass: mail_api_secret)
-                .post(mail_url, json: mail_json)
-      raise(EmailProviderError, "#{res.status} #{res.body}") if res.status >= 300
-    rescue EmailProviderError => e
+      Mailjet.send_email(
+        to: to,
+        subject: '[LostNFound] Registration Verification',
+        body: html_email
+      )
+    rescue Mailjet::EmailProviderError => e
       Api.logger.error "Email provider error: #{e.inspect}"
-      raise EmailProviderError
+      raise Mailjet::EmailProviderError
     rescue StandardError => e
       Api.logger.error "Verify registration error: #{e.inspect}, trace: #{e.backtrace}"
       raise(InvalidRegistration,
