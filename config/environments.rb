@@ -42,6 +42,18 @@ module LostNFound
         region: ENV.delete('S3_REGION')
       )
 
+      # Setup Mailjet
+      from = Mailjet::MailContact.new(
+        email: ENV.delete('MAILJET_FROM_EMAIL'),
+        name: 'LostNFound Platform'
+      )
+
+      Mailjet.setup(
+        from: from,
+        api_key: ENV.delete('MAILJET_API_KEY'),
+        api_secret: ENV.delete('MAILJET_API_SECRET')
+      )
+
       # Custom events logging
       LOGGER = Logger.new($stderr)
       def self.logger = LOGGER
