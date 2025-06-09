@@ -109,7 +109,6 @@ describe 'Test Contact Handling' do
     end
 
     it 'SAD AUTHORIZATION: should not create without any authorization' do
-      binding.irb
       post "api/v1/items/#{@item.id}/contacts", @contact_data.to_json
 
       data = JSON.parse(last_response.body)['data']
