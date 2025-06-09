@@ -14,7 +14,7 @@ module LostNFound
     def self.call(auth:, item:)
       raise ForbiddenError if auth.nil?
 
-      policy = ItemPolicy.new(auth, item, auth.scope)
+      policy = ItemPolicy.new(auth, item)
       raise ForbiddenError unless policy.can_view_contacts?
 
       item.contacts.map(&:to_h)
