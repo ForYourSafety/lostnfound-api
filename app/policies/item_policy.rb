@@ -14,7 +14,7 @@ module LostNFound
     end
 
     def can_edit?
-      item_poster?
+      item_poster? && !item_resolved?
     end
 
     def can_delete?
