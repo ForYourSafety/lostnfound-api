@@ -20,7 +20,7 @@ module LostNFound
       end
     end
 
-    def self.call(auth:, item_data:, images: [])
+    def self.call(auth:, item_data:, images: []) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength
       raise ForbiddenError unless auth
       raise ForbiddenError unless auth.scope.can_write?('items')
 
@@ -36,7 +36,7 @@ module LostNFound
       item = add_item_for_owner(owner: auth.account, item_data: item_data)
 
       handle_tags(auth: auth, item: item, tag_ids: tag_ids)
-      handle_contacts(auth: auth, item: item, contacts: contacts)
+      handle_contacts(item: item, contacts: contacts)
 
       image_keys = images.map { |image| upload_image(image) }
       item.image_keys = image_keys.join(',') if image_keys.any?
@@ -80,7 +80,7 @@ module LostNFound
       end
     end
 
-    def self.handle_contacts(auth:, item:, contacts:)
+    def self.handle_contacts(item:, contacts:)
       return unless contacts
 
       contacts.each do |contact_data|

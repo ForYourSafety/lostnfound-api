@@ -17,7 +17,7 @@ module LostNFound
       end
     end
 
-    def self.update(auth:, item_id:, new_data:, new_images:)
+    def self.update(auth:, item_id:, new_data:, new_images:) # rubocop:disable Metrics/AbcSize,Metrics/CyclomaticComplexity,Metrics/MethodLength,Metrics/PerceivedComplexity
       raise ForbiddenError unless auth
       raise ForbiddenError unless auth.scope.can_write?('items')
 

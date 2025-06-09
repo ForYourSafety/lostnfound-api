@@ -12,7 +12,7 @@ module LostNFound
     plugin :environments
 
     # rubocop:disable Lint/ConstantDefinitionInBlock
-    configure do
+    configure do # rubocop:disable Metrics/BlockLength
       # load config secrets into local environment variables (ENV)
       Figaro.application = Figaro::Application.new(
         environment: environment,

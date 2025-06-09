@@ -5,7 +5,7 @@ require_relative 'app'
 
 module LostNFound
   # Web controller for LostNFound API
-  class Api < Roda
+  class Api < Roda # rubocop:disable Metrics/ClassLength
     route('items') do |routing|
       @item_route = "#{@api_root}/items"
       routing.on String do |item_id|

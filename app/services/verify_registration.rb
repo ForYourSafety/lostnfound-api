@@ -36,7 +36,7 @@ module LostNFound
       END_EMAIL
     end
 
-    def send_email_verification
+    def send_email_verification # rubocop:disable Metrics/MethodLength
       to = Mailjet::MailContact.new(
         email: @registration[:email],
         name: @registration[:username]

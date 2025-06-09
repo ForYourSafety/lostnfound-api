@@ -12,7 +12,7 @@ module LostNFound
 
     def subject = "[LostNFound] Someone is requesting your contacts about the item: #{@item.name}"
 
-    def html_mail
+    def html_mail # rubocop:disable Metrics/MethodLength
       item_name = Rack::Utils.escape_html(@item.name)
       item_description = if @item.description
                            Rack::Utils.escape_html(@item.description)
@@ -51,7 +51,7 @@ module LostNFound
       HTML
     end
 
-    def call
+    def call # rubocop:disable Metrics/MethodLength
       to = Mailjet::MailContact.new(
         email: @item.creator.email,
         name: @item.creator.username

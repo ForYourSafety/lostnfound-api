@@ -43,7 +43,7 @@ module LostNFound
       }
     end
 
-    def summary
+    def summary # rubocop:disable Metrics/MethodLength
       {
         type: 'item',
         attributes: {

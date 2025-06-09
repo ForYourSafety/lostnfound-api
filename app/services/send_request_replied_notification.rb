@@ -17,7 +17,7 @@ module LostNFound
       end
     end
 
-    def html_mail
+    def html_mail # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
       item_name = Rack::Utils.escape_html(@request.item.name)
       item_description = if @request.item.description
                            Rack::Utils.escape_html(@request.item.description)
@@ -62,7 +62,7 @@ module LostNFound
       end
     end
 
-    def call
+    def call # rubocop:disable Metrics/MethodLength
       to = Mailjet::MailContact.new(
         email: @request.requester.email,
         name: @request.requester.username

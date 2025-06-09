@@ -6,6 +6,7 @@ require 'http'
 class Mailjet
   class EmailProviderError < StandardError; end
 
+  # Email contact with mail address and optional name
   class MailContact
     attr_accessor :email, :name
 
@@ -30,7 +31,7 @@ class Mailjet
     @api_url = api_url
   end
 
-  def self.send_email(to:, subject:, body:)
+  def self.send_email(to:, subject:, body:) # rubocop:disable Metrics/MethodLength
     raise EmailProviderError, 'Mailjet not configured' unless @from && @api_key && @api_secret
 
     to = [to] if to.is_a?(MailContact)

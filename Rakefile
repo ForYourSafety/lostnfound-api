@@ -99,6 +99,7 @@ namespace :db do
 end
 
 namespace :newkey do
+  desc 'Load libraries in lib directory'
   task(:load_libs) { require_app('lib', config: false) }
 
   desc 'Create sample cryptographic key for database'
