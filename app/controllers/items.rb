@@ -211,8 +211,9 @@ module LostNFound
           items = ItemPolicy::AccountScope.new(@auth_account).public_view
 
           JSON.pretty_generate(data: items)
-        rescue StandardError
-          routing.halt 403, { message: 'Could not find any items' }.to_json
+        rescue StandardError => e
+          App.logger.error "UNKNOWN ERROR: #{e.message}, #{e.backtrace.join("\n")}"
+          routing.halt 500, { message: 'Unknown server error' }.to_json
         end
 
         # POST /api/v1/items
