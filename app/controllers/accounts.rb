@@ -54,7 +54,6 @@ module LostNFound
             auth: @auth, username: username,
             auth_scope: AuthScope::READ_ONLY
           )
-
           { data: auth }.to_json
         rescue AuthorizeAccount::ForbiddenError => e
           routing.halt 404, { message: e.message }.to_json

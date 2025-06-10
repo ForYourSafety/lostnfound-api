@@ -39,7 +39,9 @@ module LostNFound
         attributes: {
           id:,
           username:,
-          email:
+          email:,
+          student_id:,
+          name_on_id:
         }
       }
     end

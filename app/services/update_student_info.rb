@@ -30,7 +30,7 @@ module LostNFound
         student_id: student_id,
         name_on_id: name_on_id
       )
-      account.full_details
+      account.to_h
     end
   end
 end
