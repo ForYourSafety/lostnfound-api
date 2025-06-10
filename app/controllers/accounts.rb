@@ -63,25 +63,23 @@ module LostNFound
           routing.halt 500, { message: 'API Server Error' }.to_json
         end
 
-        # POST /accounts/:username/student_info
-        routing.on 'student_info' do
-          routing.post do
-            request_data = HttpRequest.new(routing).body_data
-            updated_account = UpdateStudentInfo.call(
-              auth: @auth,
-              username: username,
-              student_info: request_data
-            )
+        # POST api/v1/accounts/[username]
+        routing.put do
+          request_data = HttpRequest.new(routing).body_data
+          updated_account = UpdateAccount.call(
+            auth: @auth, username: username,
+            account_info: request_data
+          )
 
-            response.status = 200
-            { message: 'Student info updated', data: updated_account }.to_json
-          rescue UpdateStudentInfo::UnauthorizedError => e
-            routing.halt 403, { message: e.message }.to_json
-          rescue UpdateStudentInfo::InvalidDataError => e
-            routing.halt 400, { message: e.message }.to_json
-          rescue Sequel::NoMatchingRow
-            routing.halt 404, { message: 'Account not found' }.to_json
-          end
+          response.status = 200
+          { message: 'Student info updated', data: updated_account }.to_json
+        rescue UpdateAccount::UnauthorizedError => e
+          routing.halt 403, { message: e.message }.to_json
+        rescue UpdateAccount::InvalidDataError => e
+          routing.halt 400, { message: e.message }.to_json
+        rescue StandardError => e
+          Api.logger.error "Error updating account: #{e.inspect} #{e.backtrace.join("\n")}"
+          routing.halt 500, { message: 'Error updating account' }.to_json
         end
       end
 

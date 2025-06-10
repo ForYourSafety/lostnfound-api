@@ -20,7 +20,7 @@ module LostNFound
       {
         type: 'authorized_account',
         attributes: {
-          account: account,
+          account: account.full_details,
           auth_token: token
         }
       }

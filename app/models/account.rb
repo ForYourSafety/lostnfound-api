@@ -47,6 +47,9 @@ module LostNFound
     def full_details
       to_h.merge(
         attributes: {
+          id:,
+          username:,
+          email:,
           student_id:,
           name_on_id:
         }
